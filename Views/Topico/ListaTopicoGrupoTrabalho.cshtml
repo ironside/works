@@ -1,0 +1,94 @@
+﻿@{
+    Layout = null;
+    var imgUsuarioGrupo = "";
+}
+
+
+<div class="col-md-12">
+    <h4> @(Model.Count > 0 ? Model.Count + " Tópicos" : "Seja o primeiro a criar um tópico") </h4>
+</div>
+
+<hr/>
+
+@foreach (var item in Model)
+{
+   
+    imgUsuarioGrupo = (@item.UsuarioId != null ? @item.UsuarioId.ToString() + ".jpg" : "");
+
+    <div class="col-xs-12 col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"> @item.TituloTopico</h4>
+            </div>
+            <div style="margin:10px">
+                <div class="media">
+                    <div class="media-left">
+                        <a id="profilePopup_1633126" title="" tabindex="0" class="pop avatar img-circle" role="button" data-toggle="popover" data-trigger="hover" data-html="true" data-placement="right">
+                            <img src="/Mercado/Images/Perfil/@imgUsuarioGrupo" class="img-responsive user-photo" alt="">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <a class="profileLink pop" href="/Mercado/Perfil.aspx?ID=112249" data-original-title="" title="">@item.NomeUsuario</a>
+                        <br>
+                        <small class="text-muted">em @item.DataComentarioTopico.ToString("dd/MM/yyyy HH:mm")</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body" style="background-color: #FFFFFF;">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="fr-view">
+                            <div id="topico-grupo-@item.Id" >
+                                @Html.Raw(@item.ComentarioTopico)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="btn-group pull-right" role="group" aria-label="...">
+                            @if (item.UsuarioId == item.UsuarioLogadoId || item.Admin == 1)
+                            {
+                                <a id="@item.Id" href="#" class="btn btn-default editarTopico-@item.Id topico" onclick="abrirEditorTopico('@item.Id')"> <i class="fa fa-edit"> </i> Editar</a>
+                                <a id="@item.Id" href="#" class="btn btn-default excluirTopico-@item.Id topico" onclick="excluirTopico('@item.Id')">   <i class="fa fa-trash"> </i> Excluir</a>
+                                <a id="@item.Id" href="#" class="btn btn-default salvarTopico-@item.Id topico salvartopico" onclick="salvarAlteracaoTopico('@item.Id')"> <i class="fa fa-check-circle"> </i> Salvar</a>
+                            }
+
+                            <a  href="#collapseVerComentario-@item.Id"  class="btn btn-default respondertopico" data-toggle="collapse" aria-expanded="false" aria-controls="collapseVerComentario-@item.Id" onclick="ListaComentariosTopicoGrupoTrabalho('@item.Id')">
+                             &nbsp; <i class="fa fa-comments" id="qtd-com-@item.Id"> @item.QtdeComentariosTopico </i>  &nbsp;
+                            </a>
+
+                            <a id="@item.Id" href="#collapseResponderTopico-@item.Id" class="btn btn-default respondertopico" data-toggle="collapse" aria-expanded="false" aria-controls="collapseResponderTopico-@item.Id" onclick="abrirEditorResponderTopico('@item.Id')">
+                               Responder Tópico <i class="fa fa-reply">  </i>
+                            </a>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="collapse" id="collapseResponderTopico-@item.Id">
+                            <div style="margin-bottom: 10px;">
+                                <form>
+                                    <textarea id="responderTopico-@item.Id" name="content"></textarea>
+                                </form>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="SalvarResponderTopico('@item.Id')">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="collapse" id="collapseVerComentario-@item.Id">
+                        <div class="col-md-12 col-md-10 col-xs-offset-0 col-md-offset-2">
+                            <div id='listaComentariosTopicoGrupoTrabalho-@item.Id'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript" src="/Js/Works/site.TopicoGrupoTrabalho.js"></script>
+<script type="text/javascript" src="/Js/Works/site.ComentarioTopicoGrupoTrabalho.js"></script>

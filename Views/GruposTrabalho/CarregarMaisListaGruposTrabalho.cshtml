@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "";
+}
+
+
+<style>
+    span.glyphicon {
+        font-size: 20px;
+    }
+</style>
+
+
+@foreach (var item in Model)
+{
+    var nomeimg = item.Id.ToString() + ".png";
+
+    var relativePath = "~/Content/Avatar/" + nomeimg;
+    var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+
+    if (!System.IO.File.Exists(absolutePath))
+    {
+        nomeimg = "avatar-default.png";
+    }
+
+    var url = "";
+    bool liberado = false;
+
+    if (item.BastterBlue == 0 && item.Permissao == 0)
+    {
+        url = "https://www.bastter.com/mercado/loja/assinaturas.aspx";
+        liberado = true;
+    }
+
+    if (item.BastterBlue == 0 && item.Permissao == 1)
+    {
+        url = "https://www.bastter.com/mercado/loja/assinaturas.aspx";
+        liberado = false;
+    }
+
+    if (item.BastterBlue == 1)
+    {
+        url = "";
+        liberado = true;
+    }
+
+
+    if ((item.Permissao == 0 && item.BastterBlue == 1) || (item.Permissao == 1 && item.BastterBlueParticipante) || (item.CriadorGrupo) || (item.Admin == 1))
+    {
+        url = "/GruposTrabalho/GrupoTrabalhoSelecionado/" + @item.Id;
+    }
+
+    <a href="@url" style="color: inherit;">
+
+        <div class="grid-sizer"></div>
+        <div class="grid-item" id="@item.Id">
+
+
+            @if (@liberado)
+            {
+                <div class="col-xs-12 col-md-12">
+                    <img src="/Content/Avatar/@nomeimg" />
+                </div>
+                <div class="col-xs-12 col-md-12">
+                    <h3> @item.Titulo </h3>
+                </div>
+                <div class="col-xs-12 col-md-12 fr-view">
+                    <p>
+                        @Html.Raw(item.Descricao))
+                    </p>
+                </div>
+
+                <div class="panel-footer col-xs-12 col-md-12" style="position: absolute;bottom:0;background: #fff">
+
+                    <div class="row">
+
+                        <div class="col-xs-6 col-md-6">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-xs-1 col-md-1">
+                            @if (item.Permissao == 1)
+                            {
+                                <span class="glyphicon glyphicon-eye-close" data-toggle="tooltip" title="Work privada"></span>
+                            }
+                        </div>
+
+
+                        <div class="col-xs-1 col-md-1">
+                            @if (item.Status == 0)
+                            {
+                                <span class="glyphicon glyphicon-hourglass" data-toggle="tooltip" title="Work em andamento"></span>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-ok-circle" data-toggle="tooltip" title="Work concluída"></span>
+                            }
+                        </div>
+
+                        <div class="col-xs-1 col-md-1">
+                            <span class="badge" data-toggle="tooltip" title="Participantes">@item.QtdeUsuarios</span>
+                        </div>
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <img class="img-responsive center-block img-rounded" src="/images/naoassinante.png">
+                    </div>
+                </div>
+            }
+        </div>
+    </a>
+
+}
+
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.fr-fic').css('width', '100%');
+    });
+
+    var $grid = $('.grid').imagesLoaded( function() {
+      $grid.masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true,
+        columnWidth: '.grid-sizer'
+      });
+    });
+</script>

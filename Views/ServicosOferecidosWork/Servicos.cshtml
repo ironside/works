@@ -1,0 +1,156 @@
+﻿
+
+<style type="text/css">
+
+    #box {
+        /* definimos o quão arredondado irá ficar nosso box */
+        /* Declaração para aparecer no Firefox */
+        -moz-border-radius: 10px 20px;
+        /* Para exibir nos outros navegadores como Chrome, safari, opera*/
+        -webkit-border-radius: 10px 20px;
+    }
+
+    .box1 {
+        /* definimos o quão arredondado irá ficar nosso box */
+        /* Declaração para aparecer no Firefox */
+        -moz-border-radius: 10px 10px 10px 10px;
+        /* Para exibir nos outros navegadores como Chrome, safari, opera*/
+        -webkit-border-radius: 10px 10px 10px 10px;
+    }
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<div class="container">
+
+    <header style="margin-top:10px">
+        <img class="img-responsive center-block img-rounded" src="/images/banner.png">
+    </header>
+
+    <!--
+        // *********************** Mensagens e Alertas  ***********************
+    -->
+    <div class="alert alert-success" id="success-alert" style="display:none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Sucesso! </strong>Serviço adicionado  !
+    </div>
+
+    <div class="alert alert-success" id="success-mensagem" style="display:none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Sucesso! </strong>Mensagem enviada  !
+    </div>
+    
+    <div class="alert alert-success" id="success-delete" style="display:none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Sucesso! </strong>Serviço excluído  !
+    </div>
+
+
+    <div class="row" style="margin-bottom:1px">
+        <div class="col-md-2">
+            <nav aria-label="...">
+                <ul class="pager">
+                    <li class="previous"><a href="@Url.Action("Index", "Home")"><span aria-hidden="true">&larr;</span> Voltar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-12" style="background: #FFF;" id="box">
+            <div class="col-xs-12 col-md-12" style="margin-top:10px;margin-bottom:10px;">
+                <button class="btn btn-primary btn-sm" id="criar-novo-servico"> <i class="fa fa-plus-square"> </i> Novo Serviço</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!--
+          // *********************** Bloco pesquisar serviços   *****************************
+    -->
+    <div class="row box1" style="margin-top:5px;padding:10px;background: #FFF;">
+        <div class="col-xs-12 col-md-4" style="padding:1px;">
+            <input type="text" class="form-control" id="texto_pesquisa_servico" placeholder="O que você procura?">
+        </div>
+        <div class="col-xs-12 col-md-2" style="padding:1px;">
+            <select class="form-control" id="tipopesquisa_servico">
+                <option value="">Pesquisar em</option>
+                <option value="1">Título do serviço</option>
+                <option value="2">Conteúdo do serviço</option>
+            </select>
+        </div>
+        <div class="col-xs-12 col-md-4" style="padding:1px;">
+            <select class="form-control" id="pesquisa-area-profissional">
+                <option value="" disabled selected>área profissional</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.Id">@item.NomeAreaProfissional </option>
+                }
+            </select>
+        </div>
+        <div class="col-xs-12 col-md-2" style="padding:1px;">
+            <span class="input-group-btn">
+                <span class="btn btn-default" id="pesquisa_servico"><i class="fa fa-search"></i></span>
+                <span class="btn btn-default" id="limpar_pesquisa_servico" title="" data-toggle="tooltip" data-original-title="Limpar filtros"><i class="fa fa-close"></i></span>
+            </span>
+        </div>
+    </div>
+
+    <!--
+          // *********************** Listar serviços   *****************************
+    -->
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div id='listaServicos'>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--PAINEL NOVO SERVIÇO-->
+<div class="modal" id="modal-novo-servico">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Cabeçalho do Modal -->
+            <div class="modal-header">
+                <h4>Incluir Serviço</h4>
+            </div>
+            <!-- Corpo do Modal -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <label for="titulo-servico" class="control-label">Título Serviço</label>
+                        <input type="text" id="titulo-servico" class="form-control" placeholder="Digite um título" maxlength="100">
+                    </div>
+                    <div class="col-xs-12 col-md-12">
+                        <div>
+                            <label for="descricao-servico" class="control-label">Descrição</label>
+                            <input type="text" id="descricao-servico" class="form-control" placeholder="Especifique o serviço" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12">
+                        <div>
+                            <label for="area-profissional" class="control-label">Área Profissional</label>
+                            <select class="form-control" id="area-profissional">
+                                <option value="" disabled selected>Selecione a área</option>
+                                @foreach (var item in Model)
+                                {
+                                    <option value="@item.Id">@item.NomeAreaProfissional </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Rodapé do Modal -->
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="IncluirServicoWork()"><i class="fa fa-check-circle"> Incluir</i></button>
+                <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"> Fechar</i> </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/Js/Works/site.ServicosOferecidosWork.js"></script>
+<script type="text/javascript" src="/Js/Works/site.MensagemWork.js"></script>

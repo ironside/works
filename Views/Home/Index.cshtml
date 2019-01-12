@@ -1,0 +1,194 @@
+﻿<style type="text/css">
+    .box {
+        /* definimos o quão arredondado irá ficar nosso box */
+        /* Declaração para aparecer no Firefox */
+        -moz-border-radius: 10px 20px;
+        /* Para exibir nos outros navegadores como Chrome, safari, opera*/
+        -webkit-border-radius: 10px 20px;
+    }
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<div class="container">
+
+    <header style="margin-top:10px">
+        <img class="img-responsive center-block img-rounded" src="/images/banner.png">
+    </header>
+
+
+    <!--
+        // *********************** Mensagens e Alertas  ***********************
+    -->
+    <div class="alert alert-success" id="success-alert" style="display:none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Sucesso! </strong>Work criada.
+    </div>
+
+    <div class="alert alert-warning" id="alert-warning" style="display:none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Atenção! </strong>Selecione algum filtro no 'Pesquisar em' .
+    </div>
+
+
+    @if (Model != null && Model.BastterBlue == 1)
+    {
+        <div class="row">
+            <div class="col-xs-12 col-md-12 box" style="margin-top:20px;background: #FFF;">
+                <div class="col-xs-12 col-md-12" style="margin-top:10px;margin-bottom:10px;">
+                    <button class="btn btn-primary btn-sm" id="criar-nova-work" style="margin-bottom:5px;"> <i class="fa fa-plus-square"> </i> Nova Works</button>
+                    <button class="btn btn-primary btn-sm" id="minha-work" style="margin-bottom:5px;"> <i class="fa fa-odnoklassniki"> </i> My Works</button>
+                    <button class="btn btn-primary btn-sm" onclick="ListaMensagem()" style="margin-bottom:5px;"> <i class="fa fa-envelope-o"> </i> Mensagem  <span class="badge" id="contadorMsgNaoLida">@Model.MensagensNaoLidas</span>  </button>
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("Servicos", "ServicosOferecidosWork")" style="margin-bottom:5px;"> <i class="fa fa-handshake-o"></i> Serviços </a>
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("Ofertas", "OfertasWork")" style="margin-bottom:5px;"> <i class="fa fa-bullhorn"></i> Ofertas</a>
+                    
+                    @if (Model.Admin == 1){
+                        <button class="btn btn-info btn-sm" onclick="ListaMensagemAdmin()" style="margin-bottom: 5px;"> <i class="fa fa-envelope-o"> </i> Mensagem Admin <span class="badge" id="contadorMsgNaoLidaAdmin">@Model.MensagensNaoLidasAdmin</span>  </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+
+    <!--
+      // *********************** Bloco pesquisar grupos de trabalho ***********************
+    -->
+    <div class="row box" style="margin-top:5px;padding:10px;background: #FFF;">
+        <div class="col-xs-12 col-md-12">
+            <div class="col-xs-12 col-md-5" style="padding:1px;">
+                <input type="text" class="form-control" id="texto_pesquisa_workstation" placeholder="O que você procura?">
+            </div>
+            <div class="col-xs-12 col-md-5" style="padding:1px;">
+                <select class="form-control" id="workstation_tipopesq">
+                    <option value="">Pesquisar em</option>
+                    <option value="1">Título do tópico</option>
+                    <option value="2">Conteúdo do tópico</option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-2" style="padding:1px;">
+                <span class="input-group-btn">
+                    <span class="btn btn-default" id="pesquisa_workstation"><i class="fa fa-search"></i></span>
+                    <span class="btn btn-default" id="limpar_pesquisa_workstation" title="" data-toggle="tooltip" data-original-title="Limpar filtros"><i class="fa fa-close"></i></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!--
+      // *********************** Bloco listar grupos de trabalho ***********************
+    -->
+    <div id='listaGruposTrabalho'>
+
+    </div>
+
+
+    <!--
+       // *********************** Bloco criar novo grupo trabalho  ***********************
+    -->
+    <style>
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .imagePreview {
+            width: 120px;
+            height: 120px;
+            background-position: center;
+            background: url(/Images/avatar-background.png);
+            background-color: #fff;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            display: inline-block;
+            justify-content: center;
+            box-shadow: 0px -3px 6px 2px rgba(0,0,0,0.2);
+        }
+
+        .imgUp {
+            margin-bottom: 15px;
+        }
+    </style>
+
+    <div class="modal" id="modal-nova-work">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Cabeçalho do Modal -->
+                <div class="modal-header">
+                    <h4>Nova WorkS</h4>
+                </div>
+                <div class="alert alert-warning" id="alert-imagem" style="display:none">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Atenção! </strong>Tamanho máximo permitdo da imagem 1MB .
+                </div>
+                <!-- Corpo do Modal -->
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3 imgUp">
+                            <div class="imagePreview"></div>
+                            <label class="btn btn-primary">
+                                Carregar avatar
+                                <input type="file" class="uploadFile img" id="profilePic" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;">
+                            </label>
+                        </div>
+                        <div class="col-md-9">
+                            <div>
+                                <label for="titulo-topico" class="control-label">Título</label>
+                                <p class="pull-right text-muted"><small><span name="tituloNovaArea">100</span></small> caracteres restantes</p>
+                                <input type="text" id="titulo" class="char-count form-control" name="tituloNovaArea" placeholder="Digite um título" maxlength="100">
+                            </div>
+                            <div>
+                                <label for="conteudo-topico" class="control-label">Descrição</label>
+                                <div id="novoTopicoEditor">
+                                    <form>
+                                        <textarea id="novoGrupo" name="content"></textarea>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rodapé do Modal -->
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="SalvarGrupoTrabalho()">Salvar</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--
+      // *********************** Bloco Mensagem ***********************
+    -->
+    <div class="modal" id="modal-alerta-mensagem">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Cabeçalho do Modal -->
+                <div class="modal-header">
+                    <h4>Recados</h4>
+                </div>
+                <!-- Corpo do Modal -->
+                <div class="modal-body">
+                    <p>Mostrando Modal em BootStrap</p>
+                </div>
+
+                <!-- Rodapé do Modal -->
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript" src="/Js/Works/site.GruposTrabalho.js"></script>
+<script type="text/javascript" src="/Js/Works/site.Usuario.js"></script>
+<script type="text/javascript" src="/Js/Works/site.MensagemWork.js"></script>

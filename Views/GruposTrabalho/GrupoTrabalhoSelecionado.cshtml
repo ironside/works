@@ -1,0 +1,307 @@
+﻿@{
+    var nomeimg = @Model.Id.ToString() + ".png";
+    var relativePath = "~/Content/Avatar/" + nomeimg;
+    var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+
+    if (!System.IO.File.Exists(absolutePath))
+        nomeimg = "avatar-default.png";
+
+    var imgAdmGrupo = @Model.UsuarioId.ToString() + ".jpg";
+
+    var desabilitarConfigurar = @Model.BastterBlueParticipante == true ? "" : "disabled";
+}
+
+<style type="text/css">
+
+    .box1 {
+        /* definimos o quão arredondado irá ficar nosso box */
+        /* Declaração para aparecer no Firefox */
+        -moz-border-radius: 10px 10px 10px 10px;
+        /* Para exibir nos outros navegadores como Chrome, safari, opera*/
+        -webkit-border-radius: 10px 10px 10px 10px;
+    }
+</style>
+
+
+<input type="hidden" id="IdGrupoTrabalho" value="@Model.Id" />
+<input type="hidden" id="UsuarioId" value="@Model.UsuarioId" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<div class="container">
+
+    <header style="margin-top:10px">
+        <img class="img-responsive center-block img-rounded" src="/images/banner.png">
+    </header>
+
+    <div class="col-xs-12 col-md-12">
+        <nav aria-label="...">
+            <ul class="pager">
+                <li class="previous"><a href="@Url.Action("Index", "Home")"><span aria-hidden="true">&larr;</span> Voltar</a></li>
+
+                @if (String.IsNullOrEmpty(desabilitarConfigurar))
+                {
+                    <li class="next" id="criar-modal">
+                        <a href="#">
+                            <span class="glyphicon glyphicon-cog"></span>
+                        </a>
+                    </li>
+                }
+
+            </ul>
+        </nav>
+    </div>
+    
+
+    <div class="col-xs-12 col-md-12">
+        <div class="alert alert-success" id="success-alert" style="display:none">
+            <button type="button" class="close" data-dismiss="alert">x</button>
+            <strong>Sucesso! </strong>Work alterada  !
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <div id='listaAdministradoresConsulta'>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <div id='listaParticipantesConsulta'>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div role="main" class="col-xs-12 col-md-12 box1" style="background: #FFF;">
+                <div class="col-xs-12 col-md-12" style="margin-top:10px">
+                    @if (Model.Status == 0)
+                    {
+                        <span class="glyphicon glyphicon-hourglass" aria-hidden="true"> Work em andamento</span>
+                    }
+                    else
+                    {
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"> Work concluída</span>
+                    }
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    @if (Model.Permissao == 1)
+                    {
+                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"> Work privada </span>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col-xs-8 col-md-10" style="margin-top:20px">
+                        <h4 class="text-uppercase" align="right"> <strong>@Model.Titulo</strong> </h4>
+                    </div>
+                    <div class="col-xs-4 col-md-2" style="margin-top:10px">
+                        <img class="img-responsive img-thumbnail" src="/Content/Avatar/@nomeimg" align="right">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="media-left">
+                            <a id="profilePopup_1633126" title="" tabindex="0" class="pop avatar img-circle" style="float:left;">
+                                <img src="/Mercado/Images/Perfil/@imgAdmGrupo" class="img-responsive user-photo">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <a class="profileLink pop " href="/Mercado/Perfil.aspx?ID=@Model.UsuarioId" data-original-title="" title="">@Model.NomeUsuario</a>
+                            <br>
+                            <small class="text-muted data-topico"> em @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:20px">
+                    <div class="col-xs-12 col-md-12" id="froala-editor">
+                        <div class="fr-view">
+                            @Html.Raw(@Model.Descricao)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        &nbsp;
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    @if (String.IsNullOrEmpty(desabilitarConfigurar))
+                    {
+                        <div class="col-xs-12 col-md-12" style="background: #FFF;">
+                            <div class="btn-group pull-right" role="group" aria-label="...">
+                                <a id="btn-init" href="#" class="btn btn-default">  <i class="fa fa-edit"> </i> Editar</a>
+                                <a id="btn-save" href="#" class="btn btn-default">  <i class="fa fa-check-circle"> </i> Salvar</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container" style="margin-top:20px;margin-bottom:20px">
+
+    <div class="col-xs-12 col-md-12">
+        <div class="row box1" style="background: #FFF">
+            @if (@Model.BastterBlue == 1 || @Model.Admin == 1)
+            {
+                <div class="col-xs-10 col-md-10 col-md-offset-1">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:10px;">
+                            <div class="btn-group" role="group" aria-label="...">
+                                <a data-toggle="collapse" href="#collapseTopicoGrupo" class="btn btn-default" aria-expanded="false" aria-controls="collapseTopicoGrupo">
+                                    <strong><i class="fa fa-plus-circle"></i><span class="hidden-xs"> Novo Tópico</span></strong>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse" id="collapseTopicoGrupo">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <div style="margin:10px;">
+                                    <label for="tituloTopicoGrupo" class="control-label">Título do tópico</label>
+                                    <p class="pull-right text-muted"><small><span name="tituloTopicoGrupo">100</span></small> caracteres restantes</p>
+                                    <input type="text" id="tituloTopico" required class="char-count form-control" name="tituloTopicoGrupo" placeholder="Digite um título" maxlength="100">
+                                </div>
+                                <div style="margin:10px;">
+                                    <form>
+                                        <textarea id="topicoGrupo" name="content"></textarea>
+                                    </form>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="salvarNovoTopico()" style="margin:10px;">Enviar</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="col-xs-12 col-md-10 col-xs-offset-0 col-md-offset-1">
+                <div id='listaTopicoGrupoTrabalho'>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--PAINEL CONFIGURACAO-->
+<div class="modal" id="modal-configura-work">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Cabeçalho do Modal -->
+            <div class="modal-header">
+                <h4>Configurar Work</h4>
+            </div>
+            <!-- Corpo do Modal -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div id='listaAdministradores'>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12">
+                        <div id='listaParticipantes'>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6">
+                        <input type="checkbox" id="workStatus" @(Model.Status == 1 ? "checked" : "" )> Concluir Work
+                    </div>
+                    <div class="col-xs-6">
+                        <input type="checkbox" id="workPermissao" @(Model.Permissao == 1 ? "checked" : "" )> Work Privada
+                    </div>
+                </div>
+            </div>
+            <!-- Rodapé do Modal -->
+            <div class="modal-footer">
+                <button class="btn btn-warning" onclick="ExcluirGrupo()"><i class="fa fa-trash"> Excluir</i></button>
+                <button class="btn btn-primary" onclick="SalvarAlteracoesGrupo()"><i class="fa fa-check-circle"> Salvar</i></button>
+                <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"> Fechar</i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/Js/Works/site.Usuario.js"></script>
+<script type="text/javascript" src="/Js/Works/site.GrupoTrabalhoSelecionado.js"></script>
+<script type="text/javascript" src="/Js/Works/site.TopicoGrupoTrabalho.js"></script>
+
+
+
+
+<script>
+    $(function() {
+
+
+        $("#criar-modal").click(function(){
+          $("#modal-configura-work").modal();
+        });
+
+
+        $('#topicoGrupo').froalaEditor({
+            language: 'pt_br',
+            imageUploadURL: '/Editor/UploadFiles',
+             imageUploadParams: {
+              id: 'my_editor'
+            },
+            // Set custom buttons with separator between them.
+            toolbarButtons: ['undo', 'redo' , '|', 'insertLink', 'insertImage', 'insertVideo', 'emoticons'],
+            toolbarButtonsXS: ['undo', 'redo' , '|', 'insertLink', 'insertImage', 'insertVideo', 'emoticons'],
+            quickInsertButtons: ['image', 'video'],
+            charCounterMax: 5000
+        })
+
+
+        // Catch image remove
+        $('#topicoGrupo').on('froalaEditor.image.removed', function (e, editor, $img) {
+        $.ajax({
+            // Request method.
+            method: "POST",
+
+            // Request URL.
+            url: "/Editor/DeleteImage",
+
+            // Request params.
+            data: {
+                src: $img.attr('src')
+            }
+        })
+        .done (function (data) {
+            console.log ('image was deleted');
+        })
+        .fail (function () {
+            console.log ('image delete problem');
+        })
+      })
+    });
+
+
+    $('.char-count').keyup(function() {
+        var maxLength = parseInt($(this).attr('maxlength'));
+        var length = $(this).val().length;
+        var newLength = maxLength-length;
+        var name = $(this).attr('name');
+        $('span[name="'+name+'"]').text(newLength);
+    });
+</script>

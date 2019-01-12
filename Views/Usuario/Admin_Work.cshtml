@@ -1,0 +1,44 @@
+﻿@{
+    Layout = null; }
+
+
+
+<label for="titulo-topico" class="control-label">Administradores</label>
+<select class="form-control lista-admin" id="admin" multiple="multiple" style="width: 100%"  @ViewData["disabled"]>
+    @foreach (var item in Model)
+    {
+        <option value="@item.UsuarioID">@item.Login</option>
+    }
+</select>
+
+
+
+<script>
+    function format (option) {
+        if (!option.id)
+            { return option.text; }
+        var ob = '<img src="/Mercado/Images/Perfil/' + option.id + '.jpg"' +  ' class="img-circle" width="40" height="40">'  + ' ' + option.text ;
+        return ob;
+    };
+
+
+    $(".lista-admin").select2({
+        placeholder: "Selecione",
+        "language": "pt-BR",
+        width: "100%",
+        allowClear: true,
+        templateResult: format,
+        templateSelection: function (option) {
+            if (option.id.length > 0 ) {
+                return  '<img src="/Mercado/Images/Perfil/' + option.id + '.jpg"' +  ' class="img-circle" width="40" height="40">'  + ' ' + option.text;
+            } else {
+                return option.text;
+            }
+        },
+      escapeMarkup: function (m) {
+                return m;
+            }
+    });
+ </script>
+
+
